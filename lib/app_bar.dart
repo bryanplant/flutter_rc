@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter/src/services/platform_channel.dart';
+import 'package:flutter/services.dart';
 
 class RCAppBar extends StatefulWidget {
   final String title;
@@ -16,15 +16,15 @@ class RCAppBar extends StatefulWidget {
 class RCAppBarState extends State<RCAppBar> {
   final String title;
   final double height;
-  List<PopupMenuItem<ButtonBar>> devices = new List<PopupMenuItem>();
+  List<PopupMenuItem<String>> devices = new List<PopupMenuItem>();
 
   static const bluetooth = const MethodChannel('com.bryanplant/bluetooth');
 
   bool lightOn = false;
   Color lightColor = Colors.white;
 
-  bool playOn = false;
-  Color playColor = Colors.white;
+  bool btConnected = false;
+  Color btColor = Colors.white;
 
   RCAppBarState({this.title, this.height});
 
@@ -37,9 +37,10 @@ class RCAppBarState extends State<RCAppBar> {
   Future<Null> _getPairedDevices() async {
     try {
       List<String> names = await bluetooth.invokeMethod('init');
-      names.forEach((s){
-        devices.add(new PopupMenuItem(child: new FlatButton(onPressed: () {_connectDevice(s);}, child: new Text(s))));
+      names.forEach((s) {
+        devices.add(new PopupMenuItem(child: new Text(s), value: s));
       });
+
       setState(() {});
     } catch (e) {
       print('failed... $e');
@@ -47,7 +48,14 @@ class RCAppBarState extends State<RCAppBar> {
   }
 
   Future<Null> _connectDevice(String name) async {
-    await bluetooth.invokeMethod('connect', name);
+    bool isConnected = await bluetooth.invokeMethod('connect', name);
+
+    if (isConnected) {
+      setState(() {
+        btConnected = true;
+        btColor = Colors.blue;
+      });
+    }
   }
 
   @override
@@ -63,9 +71,14 @@ class RCAppBarState extends State<RCAppBar> {
               padding: new EdgeInsets.only(left: 5.0),
               onPressed: _lightPressed),
           new PopupMenuButton(
-              icon: new Icon(Icons.bluetooth, color: playColor, size: 30.0),
+              icon: new Icon(
+                  btConnected ? Icons.bluetooth_connected : Icons.bluetooth,
+                  color: btColor, size: 30.0),
               itemBuilder: (_) {
                 return devices;
+              },
+              onSelected: (String s) {
+                _connectDevice(s);
               }
           ),
           new Text(
@@ -77,15 +90,9 @@ class RCAppBarState extends State<RCAppBar> {
 
   void _lightPressed() {
     setState(() {
+      bluetooth.invokeMethod("write", "a");
       lightOn = !lightOn;
       lightColor = lightOn ? Colors.blue : Colors.white;
-    });
-  }
-
-  void _playPressed() {
-    setState(() {
-      playOn = !playOn;
-      playColor = playOn ? Colors.blue : Colors.white;
     });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class VerticalControl extends StatefulWidget {
   final double height;
@@ -17,6 +18,8 @@ class VerticalControlState extends State<VerticalControl> {
   double height;
   double power = 0.0;
   double iconSize = 75.0;
+
+  static const bluetooth = const MethodChannel('com.bryanplant/bluetooth');
 
   VerticalControlState({this.height}) {
     maxOffset = height / 2 - iconSize / 1.5;
@@ -42,6 +45,7 @@ class VerticalControlState extends State<VerticalControl> {
                       if (offsetY > maxOffset) offsetY = maxOffset;
                       if (offsetY < -maxOffset) offsetY = -maxOffset;
                       power = -(offsetY / maxOffset) * 100.0;
+                      bluetooth.invokeMethod('write', power+100);
                     });
                   },
                   onPointerUp: (PointerEvent event) {

@@ -52,8 +52,8 @@ public class MainActivity extends FlutterActivity {
                         if (pairedDevices.size() > 0) {
                             // There are paired devices. Get the name and address of each paired device.
                             for (BluetoothDevice device : pairedDevices) {
-                                String deviceName = device.getName();
-                                pairedNames.add(deviceName);
+                                    String deviceName = device.getName();
+                                    pairedNames.add(deviceName);
                                 //String deviceHardwareAddress = device.getAddress(); // MAC address
                             }
                         }
@@ -67,7 +67,11 @@ public class MainActivity extends FlutterActivity {
                                 bluetoothThread = new BluetoothThread(address);
                                 bluetoothThread.start();
                             }
+                            result.success(true);
                         }
+                        break;
+                    case "write":
+                        connectedThread.write(call.arguments.toString());
                         break;
                     default:
                         result.notImplemented();
@@ -115,14 +119,6 @@ public class MainActivity extends FlutterActivity {
             } catch (IOException e) {
                 e.printStackTrace();
 
-                final String eMessage = e.getMessage();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run()  {
-                        System.out.println("something went wrong: \n" + eMessage);
-                    }
-                });
-
                 try {
                     bluetoothSocket.close();
                 } catch (IOException ex) {
@@ -131,12 +127,6 @@ public class MainActivity extends FlutterActivity {
             }
             if(success){
                 System.out.println("Connected!");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                });
                 startBluetoothThread(bluetoothSocket);
             }
         }
@@ -189,16 +179,9 @@ public class MainActivity extends FlutterActivity {
                     final String msgReceived = String.valueOf(bytes) +
                             " bytes received:\n"
                             + strReceived;
-
-                    runOnUiThread(new Runnable(){
-
-                        @Override
-                        public void run() {
-
-                        }});
+                    System.out.println(msgReceived);
 
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
 
                     final String msgConnectionLost = "Connection lost:\n"
@@ -213,9 +196,9 @@ public class MainActivity extends FlutterActivity {
             }
         }
 
-        public void write(byte[] buffer) {
+        public void write(String data) {
             try {
-                connectedOutputStream.write(buffer);
+                connectedBluetoothSocket.getOutputStream().write(data.getBytes());
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
