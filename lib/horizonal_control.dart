@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HorizontalControl extends StatefulWidget {
   final double width;
@@ -17,6 +18,11 @@ class HorizontalControlState extends State<HorizontalControl> {
   double width;
   double power = 0.0;
   double iconSize = 75.0;
+
+  int signalTime;
+  bool canSignal = true;
+
+  static const bluetooth = const MethodChannel('com.bryanplant/bluetooth');
 
   HorizontalControlState({this.width}) {
     maxOffset = width / 2 - iconSize / 1.5;
@@ -66,12 +72,35 @@ class HorizontalControlState extends State<HorizontalControl> {
                       if (offsetX < -maxOffset) offsetX = -maxOffset;
                       power = (offsetX / maxOffset) * 100.0;
                     });
+
+                    if (canSignal) {
+                      String signal = power.toInt().toString();
+                      bluetooth.invokeMethod("write", "{");
+
+                      for(int i = 0; i < signal.length; i++) {
+                        bluetooth.invokeMethod("write", signal[i]);
+                      }
+
+                      bluetooth.invokeMethod("write", ">");
+                      canSignal = false;
+                      signalTime = new DateTime.now().millisecondsSinceEpoch;
+                    }
+                    else {
+                      if (new DateTime.now().millisecondsSinceEpoch -
+                          signalTime > 100) {
+                        canSignal = true;
+                      }
+                    }
                   },
                   onPointerUp: (PointerEvent event) {
                     setState(() {
                       offsetX = 0.0;
                       power = 0.0;
                     });
+
+                    bluetooth.invokeMethod("write", "{");
+                    bluetooth.invokeMethod("write", "0");
+                    bluetooth.invokeMethod("write", ">");
                   },
                   child: new Container(
                       transform:
