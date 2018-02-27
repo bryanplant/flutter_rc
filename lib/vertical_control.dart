@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -52,19 +54,14 @@ class VerticalControlState extends State<VerticalControl> {
 
                     if (canSignal) {
                       String signal = power.toInt().toString();
-                      bluetooth.invokeMethod("write", "<");
+                      writeMessage("<" + signal + ">");
 
-                      for(int i = 0; i < signal.length; i++) {
-                        bluetooth.invokeMethod("write", signal[i]);
-                      }
-
-                      bluetooth.invokeMethod("write", ">");
                       canSignal = false;
                       signalTime = new DateTime.now().millisecondsSinceEpoch;
                     }
                     else {
                       if (new DateTime.now().millisecondsSinceEpoch -
-                          signalTime > 100) {
+                          signalTime > 200) {
                         canSignal = true;
                       }
                     }
@@ -75,9 +72,7 @@ class VerticalControlState extends State<VerticalControl> {
                       power = 0.0;
                     });
 
-                    bluetooth.invokeMethod("write", "<");
-                    bluetooth.invokeMethod("write", "0");
-                    bluetooth.invokeMethod("write", ">");
+                    writeMessage("<0>");
                   },
                   child: new Container(
                       transform:
@@ -106,5 +101,11 @@ class VerticalControlState extends State<VerticalControl> {
                             .apply(color: Colors.black))
                   ]))
         ]);
+  }
+
+  writeMessage(String message) async {
+    for (int i = 0; i < message.length; i++) {
+      bluetooth.invokeMethod("write", message[i]);
+    }
   }
 }
