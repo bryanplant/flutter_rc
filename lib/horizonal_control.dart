@@ -30,7 +30,10 @@ class HorizontalControlState extends State<HorizontalControl> {
 
   @override
   Widget build(BuildContext context) {
-    width = MediaQuery.of(context).size.width;
+    width = MediaQuery
+        .of(context)
+        .size
+        .width;
 
     return new Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -44,20 +47,19 @@ class HorizontalControlState extends State<HorizontalControl> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     new Text("Offset:",
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .button
-                            .apply(color: Colors.black)),
+                        style: new TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold)),
                     new Text(power.truncate().toString() + "%",
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .button
-                            .apply(color: Colors.black))
+                        style: new TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold))
                   ])),
           new Container(
-              color: Colors.blue,
+              decoration: new BoxDecoration(
+                  color: Colors.blue,
+                  border: new Border(
+                      top: new BorderSide(color: Colors.black, width: 5.0),
+                      bottom: new BorderSide(color: Colors.black, width: 5.0))
+              ),
               width: width,
               child: new Listener(
                   onPointerDown: (PointerEvent event) {
@@ -97,7 +99,7 @@ class HorizontalControlState extends State<HorizontalControl> {
                   },
                   child: new Container(
                       transform:
-                          new Matrix4.translationValues(offsetX, 0.0, 0.0),
+                      new Matrix4.translationValues(offsetX, 0.0, 0.0),
                       child: new Icon(Icons.swap_horizontal_circle,
                           color: Colors.black, size: iconSize))))
         ]);

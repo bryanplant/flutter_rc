@@ -58,11 +58,11 @@ class ControlPageState extends State<ControlPage> {
                       new EdgeInsets.only(left: marginSize, bottom: marginSize),
                   child: new VerticalControl(height: vcHeight)),
               new Container(
-                  width: hcWidth,
+                  width: hcWidth-marginSize,
                   height: hcHeight,
                   color: Colors.white,
                   margin: new EdgeInsets.only(
-                      left: marginSize, right: marginSize, bottom: marginSize),
+                      left: marginSize*2, right: marginSize, bottom: marginSize),
                   child: new HorizontalControl(width: hcWidth))
             ]))
       ]));

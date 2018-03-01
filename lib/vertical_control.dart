@@ -36,7 +36,13 @@ class VerticalControlState extends State<VerticalControl> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           new Container(
-              color: offsetY <= 1 ? Colors.lightGreen[700] : Colors.red[600],
+              decoration: new BoxDecoration(
+                  color: offsetY <= 1 ? Colors.lightGreen[700] : Colors
+                      .red[600],
+                  border: new Border(
+                      left: new BorderSide(color: Colors.black, width: 5.0),
+                      right: new BorderSide(color: Colors.black, width: 5.0))
+              ),
               height: height,
               child: new Listener(
                   onPointerDown: (PointerEvent event) {
@@ -88,17 +94,11 @@ class VerticalControlState extends State<VerticalControl> {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     new Text("Power",
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .button
-                            .apply(color: Colors.black)),
+                        style: new TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold)),
                     new Text(power.truncate().toString() + "%",
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .button
-                            .apply(color: Colors.black))
+                        style: new TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold))
                   ]))
         ]);
   }
