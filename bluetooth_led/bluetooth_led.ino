@@ -19,6 +19,8 @@ void setup() {
   pinMode(leftLed, OUTPUT);
   pinMode(rightLed, OUTPUT);
 
+  digitalWrite(frontLed, HIGH);
+
   mySerial.begin(9600);
   Serial.begin(19200);
 }
@@ -56,6 +58,7 @@ void loop() {
     done = false;
 
     int value = inputString.toInt();
+    print(value);
 
     /*if (inputString == "a") {
       if (!toggle) {

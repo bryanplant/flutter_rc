@@ -16,7 +16,7 @@ class RCAppBar extends StatefulWidget {
 class RCAppBarState extends State<RCAppBar> {
   final String title;
   final double height;
-  List<PopupMenuItem<String>> devices = new List<PopupMenuItem>();
+  List<PopupMenuItem<String>> devices = new List<PopupMenuItem<String>>();
 
   static const bluetooth = const MethodChannel('com.bryanplant/bluetooth');
 
@@ -36,7 +36,7 @@ class RCAppBarState extends State<RCAppBar> {
 
   Future<Null> _getPairedDevices() async {
     try {
-      List<String> names = await bluetooth.invokeMethod('init');
+      List names = await bluetooth.invokeMethod('init');
       names.forEach((s) {
         devices.add(new PopupMenuItem(child: new Text(s), value: s));
       });
@@ -70,7 +70,7 @@ class RCAppBarState extends State<RCAppBar> {
                   Icons.lightbulb_outline, color: lightColor, size: 30.0),
               padding: new EdgeInsets.only(left: 5.0),
               onPressed: _lightPressed),
-          new PopupMenuButton(
+          new PopupMenuButton<String>(
               icon: new Icon(
                   btConnected ? Icons.bluetooth_connected : Icons.bluetooth,
                   color: btColor, size: 30.0),
