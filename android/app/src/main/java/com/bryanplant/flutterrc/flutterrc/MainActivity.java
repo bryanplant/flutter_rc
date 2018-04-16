@@ -67,8 +67,8 @@ public class MainActivity extends FlutterActivity {
                                 bluetoothThread = new BluetoothThread(address);
                                 bluetoothThread.start();
                             }
-                            result.success(true);
                         }
+                        result.success(true);
                         break;
                     case "write":
                         connectedThread.write(call.arguments.toString());
