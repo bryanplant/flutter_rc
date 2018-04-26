@@ -23,13 +23,14 @@ import java.util.UUID;
 
 @TargetApi(23)
 public class MainActivity extends FlutterActivity {
+    //channel for flutter code to access
     private static final String CHANNEL = "com.bryanplant/bluetooth";
     int REQUEST_ENABLE_BT = 0;
     private final String UUID_STRING = "00001101-0000-1000-8000-00805F9B34FB";
     UUID myUUID = UUID.fromString(UUID_STRING);
 
-    BluetoothThread bluetoothThread;
-    ConnectedThread connectedThread;
+    BluetoothThread bluetoothThread;    //used to connect to bluetooth device
+    ConnectedThread connectedThread;    //used to send and receive messages from connected device
     BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
     List<String> pairedNames = new ArrayList<>();
@@ -38,12 +39,13 @@ public class MainActivity extends FlutterActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //a method channel that lets gui make Java bluetooth calls
         new MethodChannel(getFlutterView(), CHANNEL).setMethodCallHandler(new MethodCallHandler() {
             @Override
             public void onMethodCall(MethodCall call, Result result) {
                 switch (call.method) {
+                    //returns a list of all paired devices
                     case "init":
-
                         if (!mBluetoothAdapter.isEnabled()) {
                             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
@@ -60,6 +62,7 @@ public class MainActivity extends FlutterActivity {
 
                         result.success(pairedNames);
                         break;
+                    //connect to a given bluetooth device
                     case "connect":
                         for (BluetoothDevice b : pairedDevices) {
                             if (b.getName().equals(call.arguments)) {
@@ -70,6 +73,7 @@ public class MainActivity extends FlutterActivity {
                         }
                         result.success(true);
                         break;
+                    //send a message to bluetooth device
                     case "write":
                         connectedThread.write(call.arguments.toString());
                         break;
@@ -95,6 +99,7 @@ public class MainActivity extends FlutterActivity {
         connectedThread.start();
     }
 
+    //Thread for connecting to a bluetooth device
     class BluetoothThread extends Thread {
         private BluetoothSocket bluetoothSocket = null;
         private BluetoothDevice bluetoothDevice;
@@ -140,11 +145,7 @@ public class MainActivity extends FlutterActivity {
         }
     }
 
-    /*
-    ThreadConnected:
-    Background Thread to handle Bluetooth data communication
-    after connected
-     */
+    //Thread to handle data communication after connected
     private class ConnectedThread extends Thread {
         private final BluetoothSocket connectedBluetoothSocket;
         private final InputStream connectedInputStream;
@@ -159,7 +160,6 @@ public class MainActivity extends FlutterActivity {
                 in = socket.getInputStream();
                 out = socket.getOutputStream();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
@@ -200,7 +200,6 @@ public class MainActivity extends FlutterActivity {
             try {
                 connectedBluetoothSocket.getOutputStream().write(data.getBytes());
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -209,7 +208,6 @@ public class MainActivity extends FlutterActivity {
             try {
                 connectedBluetoothSocket.close();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
