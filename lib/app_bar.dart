@@ -47,9 +47,13 @@ class RCAppBarState extends State<RCAppBar> {
     }
   }
 
+  //method to make call to method channel to connect to given
+  //bluetooth device name
   Future<Null> _connectDevice(String name) async {
+    //connect to a device
     bool isConnected = await bluetooth.invokeMethod('connect', name);
 
+    //if the connection was successful, change the color of the icon
     if (isConnected) {
       setState(() {
         btConnected = true;
@@ -58,6 +62,7 @@ class RCAppBarState extends State<RCAppBar> {
     }
   }
 
+  //returns an RCAppBar widget
   @override
   Widget build(BuildContext context) {
     return new Container(
@@ -65,11 +70,13 @@ class RCAppBarState extends State<RCAppBar> {
       color: Colors.black,
       child: new Row(
         children: <Widget>[
+          //light bulb icon
           new IconButton(
               icon: new Icon(
                   Icons.lightbulb_outline, color: lightColor, size: 30.0),
               padding: new EdgeInsets.only(left: 5.0),
               onPressed: _lightPressed),
+          //bluetooth icon and menu
           new PopupMenuButton<String>(
               icon: new Icon(
                   btConnected ? Icons.bluetooth_connected : Icons.bluetooth,
@@ -81,6 +88,7 @@ class RCAppBarState extends State<RCAppBar> {
                 _connectDevice(s);
               }
           ),
+          //app name
           new Text(
               title, style: new TextStyle(fontSize: 20.0, color: Colors.white))
         ],
