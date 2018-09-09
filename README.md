@@ -1,8 +1,4 @@
 # flutter_rc
+An app to control an arduino rc car. Uses flutter for frontend and platform channels to java for communicating via bluetooth
 
-A new Flutter application.
-
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](http://flutter.io/).
+![image](https://raw.githubusercontent.com/bryanplant/flutter_rc/master/app.png)
